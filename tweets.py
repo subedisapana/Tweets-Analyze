@@ -15,14 +15,16 @@ auth.set_access_token(access_token, access_token_secret)
 
 api = tweepy.API(auth)
 
-tweets = api.user_timeline(screen_name='sapanasubedi5', count=200)
+tweets = api.user_timeline(screen_name='sapanasubedi5', count=211)
 lis = []
 for tweet in tweets:
     content = tweet.text
     lis.append(content)
-print(lis)
+    listToStr = ' '.join(map(str, lis))
+print(listToStr)
+
 fp = io.open("my_tweets.txt", "w", encoding="utf-8")
-fp.writelines(lis)
+fp.writelines(listToStr)
 
 
 

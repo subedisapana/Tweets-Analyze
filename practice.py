@@ -1,6 +1,8 @@
 import string
-from collections import Counter
 import matplotlib.pyplot as plt
+from wordcloud import WordCloud
+import numpy as np
+from PIL import Image
 
 
 # reading text file
@@ -33,6 +35,7 @@ for word in tokenized_words:
         final_words.append(word)
 
 emotion_list = []
+only_emotion =""
 with open('emotion.txt', 'r') as file:
     for line in file:
         clear_line = line.replace("\n", '').replace(",", '').replace("'", '').strip()
@@ -40,13 +43,74 @@ with open('emotion.txt', 'r') as file:
 
         if word in final_words:
             emotion_list.append(emotion)
+            for i in emotion_list:
+                only_emotion=only_emotion+""+i
 
-print(emotion_list)
 
-
+'''
+#for bar graph
 repeat = Counter(emotion_list)
 fig, ax1 = plt.subplots()
 ax1.bar(repeat.keys(), repeat.values())
 fig.autofmt_xdate()
 plt.savefig('graph.png')
+plt.show()
+
+'''
+
+custom_mask= np.array(Image.open('static/img/twitter_mask.jpg'))
+wordcloud = WordCloud(
+                      background_color='white',
+                      contour_width=3,
+                      contour_color='Black',
+                      max_font_size=300,
+                      min_font_size=25 )
+
+wordcloud.generate(only_emotion)
+'''
+# plot the WordCloud image
+plt.figure(figsize=(8, 8), facecolor=None)
+plt.imshow(wordcloud, interpolation="bilinear")
+plt.axis("off")
+plt.tight_layout(pad=0)
+plt.margins(x=0, y=0)
+plt.savefig('graph1.png')
+plt.show()
+'''
+
+'''
+# shaping my word cloud
+twitter_mask = np.array(Image.open("static/img/twitter_mask.png"))
+print(twitter_mask)  # Values of 255 are pure white, whereas values of 1 are black.
+twitter_mask = twitter_mask.reshape((twitter_mask.shape[0], -1), order='F') #3d into 2d
+#print(twitter_mask)
+
+
+def transform_format(val):
+    if val == 2:
+        return 255
+    else:
+        return val
+
+
+transformed_twitter_mask = np.ndarray((twitter_mask.shape[0], twitter_mask.shape[1]), np.int32)
+for i in range(len(twitter_mask)):
+    transformed_twitter_mask[i] = list(map(transform_format, twitter_mask[i]))
+# Check the expected result of your mask
+print(transformed_twitter_mask)
+
+
+wc = WordCloud(background_color="white", max_words=100, mask=transformed_twitter_mask, contour_width=3, contour_color='blue')
+
+# Generate a wordcloud
+wc.generate(texxt)
+
+# store to file
+wc.to_file("static/img/twitter_mask.png")
+'''
+# show
+
+plt.imshow(wordcloud, interpolation='bilinear')
+plt.axis("off")
+plt.savefig('graph2.png')
 plt.show()
